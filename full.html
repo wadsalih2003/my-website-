@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CareerConnect - Job Portal</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <!-- Custom CSS -->
+  <style>
+    :root {
+      --primary-color: #007bff;
+      --secondary-color: #6c757d;
+      --success-color: #28a745;
+      --info-color: #17a2b8;
+      --warning-color: #ffc107;
+      --danger-color: #dc3545;
+      --light-color: #f8f9fa;
+      --dark-color: #343a40;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f7fa;
+      position: relative;
+      min-height: 100vh;
+      padding-bottom: 100px;
+    }
+    
+    /* Navbar */
+    .navbar {
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .navbar-brand img {
+      height: 40px;
+    }
+    
+    /* Hero Section */
+    .hero-section {
+      background: linear-gradient(rgba(0, 123, 255, 0.8), rgba(0, 123, 255, 0.8)), 
+                  url('https://images.unsplash.com/photo-1521791136064-7986c2920216?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80') no-repeat center center/cover;
+      height: 500px;
+      color: white;
+    }
+    
+    /* Cards */
+    .feature-card {
+      transition: all 0.3s ease;
+      border: none;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .job-card {
+      transition: all 0.3s ease;
+      border: none;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .job-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .job-badge {
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    
+    /* Section styling */
+    .section {
+      padding: 80px 0;
+    }
+    
+    .section-title {
+      position: relative;
+      margin-bottom: 50px;
+      padding-bottom: 15px;
+    }
+    
+    .section-title:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background: var(--primary-color);
+    }
+    
+    /* Footer */
+    .footer {
+      background-color: var(--dark-color);
+      color: white;
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+    }
+    
+    /* Custom utilities */
+    .bg-light-blue {
+      background-color: #f0f8ff;
+    }
+    
+    .text-light-blue {
+      color: #f0f8ff;
+    }
+    
+    .rounded-xl {
+      border-radius: 15px;
+    }
+    
+    /* Typeahead styles */
+    .tt-menu {
+      width: 100%;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-shadow: 0 5px 10px rgba(0,0,0,.2);
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    
+    .tt-suggestion {
+      padding: 8px 15px;
+      cursor: pointer;
+    }
+    
+    .tt-suggestion:hover {
+      background-color: #f5f5f5;
+    }
+    
+    /* Alert positioning */
+    .alert-container {
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      z-index: 1050;
+      width: 350px;
+    }
+    
+    /* Scrollspy highlight */
+    .navbar .nav-link.active {
+      font-weight: 600;
+      color: var(--primary-color) !important;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .hero-section {
+        height: auto;
+        padding: 100px 0;
+      }
+      
+      .section {
+        padding: 50px 0;
+      }
+    }
+  </style>
+</head>
+<body data-bs-spy="scroll" data-bs-target="#main-nav" data-bs-offset="100">
+  <!-- Alert Container -->
+  <div class="alert-container">
+    <div id="liveAlert" class="alert alert-success alert-dismissible fade show d-none" role="alert">
+      <span id="alertMessage">Job saved successfully!</span>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav id="main-nav" class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <img src="https://via.placeholder.com/180x50?text=CareerConnect" alt="CareerConnect Logo">
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" href="#home">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#jobs">Browse Jobs</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#companies">Companies</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="resourcesDropdown" role="button" data-bs-toggle="dropdown">
+              Resources
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#resume-tips">Resume Tips</a></li>
+              <li><a class="dropdown-item" href="#interview-prep">Interview Prep</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#career-advice">Career Advice</a></li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#about">About Us</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#contact">Contact</a>
+          </li>
+        </ul>
+        
+        <div class="d-flex">
+          <div class="dropdown me-2">
+            <button class="btn btn-outline-primary dropdown-toggle" type="button" id="accountDropdown" data-bs-toggle="dropdown">
+              <i class="bi bi-person-circle"></i> Account
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#loginModal"><i class="bi bi-box-arrow-in-right"></i> Login</a></li>
+              <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#registerModal"><i class="bi bi-person-plus"></i> Register</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#profile"><i class="bi bi-person"></i> Profile</a></li>
+              <li><a class="dropdown-item" href="#saved-jobs"><i class="bi bi-bookmark"></i> Saved Jobs</a></li>
+            </ul>
+          </div>
+          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#postJobModal">
+            <i class="bi bi-briefcase"></i> Post a Job
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section id="home" class="hero-section d-flex align-items-center">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6 mb-5 mb-lg-0">
+          <h1 class="display-4 fw-bold mb-4">Find Your Dream Job Today</h1>
+          <p class="lead mb-5">Join thousands of companies and job seekers using our platform to connect talent with opportunity.</p>
+          
+          <!-- Search Form with Typeahead -->
+          <div class="card rounded-xl shadow">
+            <div class="card-body p-4">
+              <form class="row g-3">
+                <div class="col-md-5">
+                  <div class="position-relative">
+                    <label for="jobSearch" class="form-label visually-hidden">Job title or keyword</label>
+                    <input type="text" class="form-control form-control-lg typeahead" id="jobSearch" placeholder="Job title or keyword">
+                    <i class="bi bi-search position-absolute top-50 end-0 translate-middle-y me-3 text-muted"></i>
+                  </div>
+                </div>
+                <div class="col-md-5">
+                  <div class="position-relative">
+                    <label for="locationSearch" class="form-label visually-hidden">Location</label>
+                    <input type="text" class="form-control form-control-lg typeahead" id="locationSearch" placeholder="Location">
+                    <i class="bi bi-geo-alt position-absolute top-50 end-0 translate-middle-y me-3 text-muted"></i>
+                  </div>
+                </div>
+                <div class="col-md-2">
+                  <button type="submit" class="btn btn-primary btn-lg w-100">Search</button>
+                </div>
+              </form>
+            </div>
+          </div>
+          
+          <div class="mt-4">
+            <span class="text-white-50 me-3">Popular Searches:</span>
+            <a href="#" class="badge bg-light text-dark me-2">Developer</a>
+            <a href="#" class="badge bg-light text-dark me-2">Designer</a>
+            <a href="#" class="badge bg-light text-dark me-2">Marketing</a>
+            <a href="#" class="badge bg-light text-dark">Remote</a>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <!-- Carousel -->
+          <div id="heroCarousel" class="carousel slide rounded-xl shadow" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+              <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
+              <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+              <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+            </div>
+            <div class="carousel-inner rounded-xl">
+              <div class="carousel-item active">
+                <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" class="d-block w-100" alt="Job Interview">
+                <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-3">
+                  <h5>Find the Right Candidate</h5>
+                  <p>Connect with qualified professionals for your open positions.</p>
+                </div>
+              </div>
+              <div class="carousel-item">
+                <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" class="d-block w-100" alt="Team Meeting">
+                <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-3">
+                  <h5>Join Great Teams</h5>
+                  <p>Discover companies that value talent and innovation.</p>
+                </div>
+              </div>
+              <div class="carousel-item">
+                <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2067&q=80" class="d-block w-100" alt="Remote Work">
+                <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-3">
+                  <h5>Work From Anywhere</h5>
+                  <p>Explore remote opportunities with top companies worldwide.</p>
+                </div>
+              </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="section bg-light-blue">
+    <div class="container">
+      <h2 class="section-title text-center">Why Choose CareerConnect?</h2>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="card feature-card h-100">
+            <div class="card-body text-center p-4">
+              <div class="icon-box bg-primary bg-opacity-10 text-primary rounded-circle p-3 d-inline-block mb-4">
+                <i class="bi bi-search-heart fs-1"></i>
+              </div>
+              <h4 class="mb-3">Smart Job Matching</h4>
+              <p class="text-muted">Our advanced algorithm matches your skills and preferences with the perfect job opportunities.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card feature-card h-100">
+            <div class="card-body text-center p-4">
+              <div class="icon-box bg-success bg-opacity-10 text-success rounded-circle p-3 d-inline-block mb-4">
+                <i class="bi bi-building fs-1"></i>
+              </div>
+              <h4 class="mb-3">Top Companies</h4>
+              <p class="text-muted">Connect with thousands of reputable companies actively hiring on our platform.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card feature-card h-100">
+            <div class="card-body text-center p-4">
+              <div class="icon-box bg-info bg-opacity-10 text-info rounded-circle p-3 d-inline-block mb-4">
+                <i class="bi bi-shield-check fs-1"></i>
+              </div>
+              <h4 class="mb-3">Trusted Platform</h4>
+              <p class="text-muted">Verified job listings and company profiles ensure a safe and reliable job search experience.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Job Listings Section -->
+  <section id="jobs" class="section">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center mb-5">
+        <h2 class="section-title mb-0">Latest Job Openings</h2>
+        <div>
+          <button class="btn btn-outline-primary me-2" data-bs-toggle="tooltip" title="Save this search">
+            <i class="bi bi-bell"></i> Alert Me
+          </button>
+          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#filterModal">
+            <i class="bi bi-funnel"></i> Filters
+          </button>
+        </div>
+      </div>
+      
+      <!-- Breadcrumb -->
+      <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="#home">Home</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Job Listings</li>
+        </ol>
+      </nav>
+      
+      <div class="row">
+        <div class="col-lg-8">
+          <!-- Job Cards -->
+          <div class="card mb-4 job-card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <h3 class="h4 mb-1">Senior Frontend Developer (React)</h3>
+                  <p class="text-muted mb-2">TechSolutions Inc. • <i class="bi bi-geo-alt"></i> Bangalore, India</p>
+                </div>
+                <div>
+                  <span class="badge bg-success job-badge">Full-time</span>
+                  <span class="badge bg-info job-badge" data-bs-toggle="tooltip" title="This job was posted recently">New</span>
+                </div>
+              </div>
+              <p class="mb-3">We're looking for an experienced React developer to join our team building cutting-edge web applications...</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <span class="fw-bold text-primary">₹1,200,000 - ₹1,800,000/yr</span>
+                  <span class="text-muted ms-2"><i class="bi bi-clock"></i> 2 days ago</span>
+                </div>
+                <div>
+                  <button class="btn btn-sm btn-outline-secondary me-2 save-btn" data-job-id="101">
+                    <i class="bi bi-bookmark"></i> Save
+                  </button>
+                  <button class="btn btn-sm btn-primary apply-btn" data-job-id="101">
+                    Apply Now
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card mb-4 job-card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <h3 class="h4 mb-1">UX/UI Designer</h3>
+                  <p class="text-muted mb-2">CreativeMinds • <i class="bi bi-geo-alt"></i> Remote</p>
+                </div>
+                <div>
+                  <span class="badge bg-warning text-dark job-badge">Contract</span>
+                  <span class="badge bg-info job-badge" data-bs-toggle="tooltip" title="This job was posted recently">New</span>
+                </div>
+              </div>
+              <p class="mb-3">Join our design team to create beautiful, intuitive interfaces for our suite of products...</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <span class="fw-bold text-primary">₹800,000 - ₹1,200,000/yr</span>
+                  <span class="text-muted ms-2"><i class="bi bi-clock"></i> 5 days ago</span>
+                </div>
+                <div>
+                  <button class="btn btn-sm btn-outline-secondary me-2 save-btn" data-job-id="102">
+                    <i class="bi bi-bookmark"></i> Save
+                  </button>
+                  <button class="btn btn-sm btn-primary apply-btn" data-job-id="102">
+                    Apply Now
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card mb-4 job-card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <h3 class="h4 mb-1">Data Scientist</h3>
+                  <p class="text-muted mb-2">AnalyticsPro • <i class="bi bi-geo-alt"></i> Mumbai, India</p>
+                </div>
+                <div>
+                  <span class="badge bg-success job-badge">Full-time</span>
+                  <span class="badge bg-danger job-badge" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-content="Urgently hiring!">Urgent</span>
+                </div>
+              </div>
+              <p class="mb-3">Seeking a data scientist with Python and machine learning experience to join our analytics team...</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <span class="fw-bold text-primary">₹1,500,000 - ₹2,200,000/yr</span>
+                  <span class="text-muted ms-2"><i class="bi bi-clock"></i> 1 week ago</span>
+                </div>
+                <div>
+                  <button class="btn btn-sm btn-outline-secondary me-2 save-btn" data-job-id="103">
+                    <i class="bi bi-bookmark"></i> Save
+                  </button>
+                  <button class="btn btn-sm btn-primary apply-btn" data-job-id="103">
+                    Apply Now
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card mb-4 job-card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <h3 class="h4 mb-1">Product Manager</h3>
+                  <p class="text-muted mb-2">InnovateTech • <i class="bi bi-geo-alt"></i> Delhi, India</p>
+                </div>
+                <div>
+                  <span class="badge bg-success job-badge">Full-time</span>
+                </div>
+              </div>
+              <p class="mb-3">Lead product development for our SaaS platform, working with engineering and design teams...</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <span class="fw-bold text-primary">₹1,800,000 - ₹2,500,000/yr</span>
+                  <span class="text-muted ms-2"><i class="bi bi-clock"></i> 2 weeks ago</span>
+                </div>
+                <div>
+                  <button class="btn btn-sm btn-outline-secondary me-2 save-btn" data-job-id="104">
+                    <i class="bi bi-bookmark"></i> Save
+                  </button>
+                  <button class="btn btn-sm btn-primary apply-btn" data-job-id="104">
+                    Apply Now
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Pagination -->
+          <nav aria-label="Job listings pagination" class="mt-5">
+            <ul class="pagination justify-content-center">
+              <li class="page-item disabled">
+                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+              </li>
+              <li class="page-item active"><a class="page-link" href="#">1</a></li>
+              <li class="page-item"><a class="page-link" href="#">2</a></li>
+              <li class="page-item"><a class="page-link" href="#">3</a></li>
+              <li class="page-item">
+                <a class="page-link" href="#">Next</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+        
+        <div class="col-lg-4">
+          <!-- Job Alerts Card -->
+          <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+              <h5 class="mb-0">Create Job Alert</h5>
+            </div>
+            <div class="card-body">
+              <p>Get notified when new jobs match your search criteria.</p>
+              <form>
+                <div class="mb-3">
+                  <label for="alertKeywords" class="form-label">Keywords</label>
+                  <input type="text" class="form-control" id="alertKeywords" placeholder="e.g. 'developer', 'designer'">
+                </div>
+                <div class="mb-3">
+                  <label for="alertLocation" class="form-label">Location</label>
+                  <input type="text" class="form-control" id="alertLocation" placeholder="e.g. 'Bangalore', 'Remote'">
+                </div>
+                <div class="mb-3">
+                  <label for="alertFrequency" class="form-label">Email Frequency</label>
+                  <select class="form-select" id="alertFrequency">
+                    <option value="daily">Daily</option>
+                    <option value="weekly" selected>Weekly</option>
+                    <option value="monthly">Monthly</option>
+                  </select>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Create Alert</button>
+              </form>
+            </div>
+          </div>
+          
+          <!-- Featured Companies -->
+          <div class="card">
+            <div class="card-header bg-primary text-white">
+              <h5 class="mb-0">Featured Companies</h5>
+            </div>
+            <div class="card-body">
+              <div class="d-flex mb-3">
+                <img src="https://via.placeholder.com/50x50?text=TS" class="rounded-circle me-3" alt="TechSolutions">
+                <div>
+                  <h6 class="mb-0">TechSolutions Inc.</h6>
+                  <small class="text-muted">12 open positions</small>
+                </div>
+              </div>
+              <div class="d-flex mb-3">
+                <img src="https://via.placeholder.com/50x50?text=CM" class="rounded-circle me-3" alt="CreativeMinds">
+                <div>
+                  <h6 class="mb-0">CreativeMinds</h6>
+                  <small class="text-muted">5 open positions</small>
+                </div>
+              </div>
+              <div class="d-flex mb-3">
+                <img src="https://via.placeholder.com/50x50?text=AP" class="rounded-circle me-3" alt="AnalyticsPro">
+                <div>
+                  <h6 class="mb-0">AnalyticsPro</h6>
+                  <small class="text-muted">8 open positions</small>
+                </div>
+              </div>
+              <div class="d-flex">
+                <img src="https://via.placeholder.com/50x50?text=IT" class="rounded-circle me-3" alt="InnovateTech">
+                <div>
+                  <h6 class="mb-0">InnovateTech</h6>
+                  <small class="text-muted">3 open positions</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Companies Section -->
+  <section id="companies" class="section bg-light">
+    <div class="container">
+      <h2 class="section-title text-center">Top Hiring Companies</h2>
+      <p class="text-center text-muted mb-5">Join thousands of professionals working at these great companies</p>
+      
+      <div class="row g-4">
+        <div class="col-6 col-md-3">
+          <div class="card h-100 text-center p-4">
+            <img src="https://via.placeholder.com/150x80?text=TechCorp" class="card-img-top" alt="TechCorp">
+            <div class="card-body">
+              <h5 class="card-title">TechCorp</h5>
+              <p class="card-text text-muted">12 open positions</p>
+              <a href="#" class="btn btn-sm btn-outline-primary">View Jobs</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card h-100 text-center p-4">
+            <img src="https://via.placeholder.com/150x80?text=DesignHub" class="card-img-top" alt="DesignHub">
+            <div class="card-body">
+              <h5 class="card-title">DesignHub</h5>
+              <p class="card-text text-muted">8 open positions</p>
+              <a href="#" class="btn btn-sm btn-outline-primary">View Jobs</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card h-100 text-center p-4">
+            <img src="https://via.placeholder.com/150x80?text=DataSystems" class="card-img-top" alt="DataSystems">
+            <div class="card-body">
+              <h5 class="card-title">DataSystems</h5>
+              <p class="card-text text-muted">5 open positions</p>
+              <a href="#" class="btn btn-sm btn-outline-primary">View Jobs</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card h-100 text-center p-4">
+            <img src="https://via.placeholder.com/150x80?text=CloudNine" class="card-img-top" alt="CloudNine">
+            <div class="card-body">
+              <h5 class="card-title">CloudNine</h5>
+              <p class="card-text text-muted">7 open positions</p>
+              <a href="#" class="btn btn-sm btn-outline-primary">View Jobs</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="text-center mt-5">
+        <a href="#" class="btn btn-primary">View All Companies</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="section bg-primary text-white">
+    <div class="container">
+      <h2 class="section-title text-center text-white">Success Stories</h2>
+      <p class="text-center mb-5">What our users say about CareerConnect</p>
+      
+      <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <div class="row justify-content-center">
+              <div class="col-lg-8">
+                <div class="text-center">
+                  <img src="https://via.placeholder.com/100x100?text=AK" class="rounded-circle mb-3" alt="Ankit K.">
+                  <blockquote class="blockquote">
+                    <p>"CareerConnect helped me find my dream job in just two weeks! The platform is easy to use and the job matching is spot on."</p>
+                    <footer class="blockquote-footer text-white">Ankit K. <cite>Senior Developer at TechSolutions</cite></footer>
+                  </blockquote>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="row justify-content-center">
+              <div class="col-lg-8">
+                <div class="text-center">
+                  <img src="https://via.placeholder.com/100x100?text=PS" class="rounded-circle mb-3" alt="Priya S.">
+                  <blockquote class="blockquote">
+                    <p>"As a hiring manager, I've found all my best candidates through CareerConnect. The quality of applicants is exceptional."</p>
+                    <footer class="blockquote-footer text-white">Priya S. <cite>HR Director at DesignHub</cite></footer>
+                  </blockquote>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="row justify-content-center">
+              <div class="col-lg-8">
+                <div class="text-center">
+                  <img src="https://via.placeholder.com/100x100?text=RM" class="rounded-circle mb-3" alt="Rahul M.">
+                  <blockquote class="blockquote">
+                    <p>"After months of searching elsewhere, I got three interviews in my first week using CareerConnect. Landed a great remote position!"</p>
+                    <footer class="blockquote-footer text-white">Rahul M. <cite>UX Designer at CreativeMinds</cite></footer>
+                  </blockquote>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="section">
+    <div class="container">
+      <div class="card bg-dark text-white overflow-hidden">
+        <div class="row g-0">
+          <div class="col-md-6 d-flex align-items-center">
+            <div class="card-body p-5">
+              <h2 class="card-title">Ready to take the next step in your career?</h2>
+              <p class="card-text">Join thousands of professionals who found their dream jobs through CareerConnect.</p>
+              <div class="d-flex flex-wrap gap-2">
+                <a href="#" class="btn btn-primary">Search Jobs</a>
+                <a href="#" class="btn btn-outline-light">Create Profile</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 d-none d-md-block">
+            <img src="https://images.unsplash.com/photo-1521791055366-0d553872125f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80" class="img-fluid h-100" style="object-fit: cover;" alt="Career Growth">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container py-5">
+      <div class="row g-4">
+        <div class="col-lg-4">
+          <img src="https://via.placeholder.com/180x50?text=CareerConnect" alt="CareerConnect Logo" class="mb-3">
+          <p>Connecting talent with opportunity since 2023. Our mission is to make job searching and hiring simple, efficient, and effective.</p>
+          <div class="social-icons">
+            <a href="#" class="text-white me-2"><i class="bi bi-facebook fs-5"></i></a>
+            <a href="#" class="text-white me-2"><i class="bi bi-twitter fs-5"></i></a>
+            <a href="#" class="text-white me-2"><i class="bi bi-linkedin fs-5"></i></a>
+            <a href="#" class="text-white"><i class="bi bi-instagram fs-5"></i></a>
+          </div>
+        </div>
+        <div class="col-lg-2 col-md-4">
+          <h5>For Job Seekers</h5>
+          <ul class="nav flex-column">
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white-50">Browse Jobs</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white-50">Job Alerts</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white-50">Career Advice</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white-50">Resume Builder</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white-50">Salary Calculator</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-2 col-md-4">
+          <h5>For Employers</h5>
+          <ul class="nav flex-column">
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white-50">Post a Job</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white-50">Browse Candidates</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white-50">Recruitment Solutions</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white-50">Pricing Plans</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white-50">Employer Resources</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-2 col-md-4">
+          <h5>Company</h5>
+          <ul class="nav flex-column">
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white-50">About Us</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white-50">Careers</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white-50">Blog</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white-50">Press</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white-50">Contact Us</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-2">
+          <h5>Legal</h5>
+          <ul class="nav flex-column">
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white-50">Privacy Policy</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white-50">Terms of Service</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white-50">Cookie Policy</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white-50">GDPR</a></li>
+          </ul>
+        </div>
+      </div>
+      <hr class="my-4">
+      <div class="d-flex flex-column flex-sm-row justify-content-between">
+        <p class="mb-0">&copy; 2023 CareerConnect. All rights reserved.</p>
+        <div class="d-flex">
+          <a href="#" class="text-white-50 me-3">Privacy Policy</a>
+          <a href="#" class="text-white-50">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Modals -->
+  <!-- Login Modal -->
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Login to Your Account</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="loginForm">
+            <div class="mb-3">
+              <label for="loginEmail" class="form-label">Email address</label>
+              <input type="email" class="form-control" id="loginEmail" required>
+            </div>
+            <div class="mb-3">
+              <label for="loginPassword" class="form-label">Password</label>
+              <input type="password" class="form-control" id="loginPassword" required>
+            </div>
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="rememberMe">
+              <label class="form-check-label" for="rememberMe">Remember me</label>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 mb-3">Login</button>
+            <div class="text-center">
+              <a href="#" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal" data-bs-dismiss="modal">Forgot password?</a>
+            </div>
+          </form>
+          <div class="d-flex align-items-center my-4">
+            <hr class="flex-grow-1">
+            <span class="mx-3 text-muted">or</span>
+            <hr class="flex-grow-1">
+          </div>
+          <div class="text-center">
+            <p class="mb-3">Login with social account</p>
+            <button type="button" class="btn btn-outline-primary me-2">
+              <i class="bi bi-google"></i>
+            </button>
+            <button type="button" class="btn btn-outline-primary me-2">
+              <i class="bi bi-facebook"></i>
+            </button>
+            <button type="button" class="btn btn-outline-primary">
+              <i class="bi bi-linkedin"></i>
+            </button>
+          </div>
+        </div>
+        <div class="modal-footer justify-content-center">
+          Don't have an account? <a href="#" class="ms-2" data-bs-toggle="modal" data-bs-target="#registerModal" data-bs-dismiss="modal">Register</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Register Modal -->
+  <div class="modal fade" id="registerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Create Your Account</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="registerForm">
+            <div class="mb-3">
+              <label for="registerName" class="form-label">Full Name</label>
+              <input type="text" class="form-control" id="registerName" required>
+            </div>
+            <div class="mb-3">
+              <label for="registerEmail" class="form-label">Email address</label>
+              <input type="email" class="form-control" id="registerEmail" required>
+            </div>
+            <div class="mb-3">
+              <label for="registerPassword" class="form-label">Password</label>
+              <input type="password" class="form-control" id="registerPassword" required>
+            </div>
+            <div class="mb-3">
+              <label for="registerConfirmPassword" class="form-label">Confirm Password</label>
+              <input type="password" class="form-control" id="registerConfirmPassword" required>
+            </div>
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="acceptTerms" required>
+              <label class="form-check-label" for="acceptTerms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Register</button>
+          </form>
+          <div class="d-flex align-items-center my-4">
+            <hr class="flex-grow-1">
+            <span class="mx-3 text-muted">or</span>
+            <hr class="flex-grow-1">
+          </div>
+          <div class="text-center">
+            <p class="mb-3">Register with social account</p>
+            <button type="button" class="btn btn-outline-primary me-2">
+              <i class="bi bi-google"></i>
+            </button>
+            <button type="button" class="btn btn-outline-primary me-2">
+              <i class="bi bi-facebook"></i>
+            </button>
+            <button type="button" class="btn btn-outline-primary">
+              <i class="bi bi-linkedin"></i>
+            </button>
+          </div>
+        </div>
+        <div class="modal-footer justify-content-center">
+          Already have an account? <a href="#" class="ms-2" data-bs-toggle="modal" data-bs-target="#loginModal" data-bs-dismiss="modal">Login</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Forgot Password Modal -->
+  <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Reset Your Password</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="forgotPasswordForm">
+            <p class="mb-4">Enter your email address and we'll send you a link to reset your password.</p>
+            <div class="mb-3">
+              <label for="forgotEmail" class="form-label">Email address</label>
+              <input type="email" class="form-control" id="forgotEmail" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Send Reset Link</button>
+          </form>
+        </div>
+        <div class="modal-footer justify-content-center">
+          Remember your password? <a href="#" class="ms-2" data-bs-toggle="modal" data-bs-target="#loginModal" data-bs-dismiss="modal">Login</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Post Job Modal -->
+  <div class="modal fade" id="postJobModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Post a New Job</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="postJobForm">
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="jobTitle" class="form-label">Job Title*</label>
+                <input type="text" class="form-control" id="jobTitle" required>
+              </div>
+              <div class="col-md-6">
+                <label for="jobType" class="form-label">Job Type*</label>
+                <select class="form-select" id="jobType" required>
+                  <option value="">Select job type</option>
+                  <option value="full-time">Full-time</option>
+                  <option value="part-time">Part-time</option>
+                  <option value="contract">Contract</option>
+                  <option value="internship">Internship</option>
+                  <option value="temporary">Temporary</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="jobDescription" class="form-label">Job Description*</label>
+              <textarea class="form-control" id="jobDescription" rows="5" required></textarea>
+            </div>
+            
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="jobLocation" class="form-label">Location*</label>
+                <input type="text" class="form-control typeahead" id="jobLocation" required>
+              </div>
+              <div class="col-md-6">
+                <label for="jobRemote" class="form-label">Remote Option</label>
+                <select class="form-select" id="jobRemote">
+                  <option value="no">No Remote</option>
+                  <option value="hybrid">Hybrid</option>
+                  <option value="full">Fully Remote</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="jobSalary" class="form-label">Salary Range</label>
+                <input type="text" class="form-control" id="jobSalary" placeholder="e.g. ₹800,000 - ₹1,200,000">
+              </div>
+              <div class="col-md-6">
+                <label for="jobExperience" class="form-label">Experience Level</label>
+                <select class="form-select" id="jobExperience">
+                  <option value="">Any experience level</option>
+                  <option value="entry">Entry Level</option>
+                  <option value="mid">Mid Level</option>
+                  <option value="senior">Senior Level</option>
+                  <option value="executive">Executive</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="jobSkills" class="form-label">Required Skills</label>
+              <input type="text" class="form-control" id="jobSkills" placeholder="Separate skills with commas">
+            </div>
+            
+            <div class="mb-3">
+              <label for="jobBenefits" class="form-label">Benefits</label>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="healthInsurance">
+                <label class="form-check-label" for="healthInsurance">Health Insurance</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="flexHours">
+                <label class="form-check-label" for="flexHours">Flexible Hours</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="paidLeave">
+                <label class="form-check-label" for="paidLeave">Paid Leave</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="training">
+                <label class="form-check-label" for="training">Training & Development</label>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="jobDeadline" class="form-label">Application Deadline</label>
+              <input type="date" class="form-control" id="jobDeadline">
+            </div>
+            
+            <div class="form-check mb-4">
+              <input class="form-check-input" type="checkbox" id="featuredJob">
+              <label class="form-check-label" for="featuredJob">Feature this job listing (additional charge)</label>
+            </div>
+            
+            <button type="submit" class="btn btn-primary w-100">Post Job</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Modal -->
+  <div class="modal fade" id="filterModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Filter Jobs</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="filterForm">
+            <div class="mb-3">
+              <label class="form-label">Job Type</label>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="filterFullTime" checked>
+                <label class="form-check-label" for="filterFullTime">Full-time</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="filterPartTime" checked>
+                <label class="form-check-label" for="filterPartTime">Part-time</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="filterContract" checked>
+                <label class="form-check-label" for="filterContract">Contract</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="filterInternship" checked>
+                <label class="form-check-label" for="filterInternship">Internship</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="filterRemote" checked>
+                <label class="form-check-label" for="filterRemote">Remote</label>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label">Experience Level</label>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="experienceLevel" id="filterExpAny" checked>
+                <label class="form-check-label" for="filterExpAny">Any experience level</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="experienceLevel" id="filterExpEntry">
+                <label class="form-check-label" for="filterExpEntry">Entry Level</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="experienceLevel" id="filterExpMid">
+                <label class="form-check-label" for="filterExpMid">Mid Level</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="experienceLevel" id="filterExpSenior">
+                <label class="form-check-label" for="filterExpSenior">Senior Level</label>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="filterSalary" class="form-label">Salary Range</label>
+              <select class="form-select" id="filterSalary">
+                <option value="">Any salary</option>
+                <option value="0-500">Up to ₹500,000</option>
+                <option value="500-1000">₹500,000 - ₹1,000,000</option>
+                <option value="1000-1500">₹1,000,000 - ₹1,500,000</option>
+                <option value="1500+">Over ₹1,500,000</option>
+              </select>
+            </div>
+            
+            <div class="mb-3">
+              <label for="filterPosted" class="form-label">Posted Within</label>
+              <select class="form-select" id="filterPosted">
+                <option value="">Any time</option>
+                <option value="1">Last 24 hours</option>
+                <option value="7">Last week</option>
+                <option value="14">Last 2 weeks</option>
+                <option value="30">Last month</option>
+              </select>
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label">Company Size</label>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="filterSizeStartup" checked>
+                <label class="form-check-label" for="filterSizeStartup">Startup (1-50)</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="filterSizeSmall" checked>
+                <label class="form-check-label" for="filterSizeSmall">Small (51-200)</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="filterSizeMedium" checked>
+                <label class="form-check-label" for="filterSizeMedium">Medium (201-1000)</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="filterSizeLarge" checked>
+                <label class="form-check-label" for="filterSizeLarge">Large (1000+)</label>
+              </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Typeahead.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/1.3.1/typeahead.bundle.min.js"></script>
+  
+  <script>
+    // Initialize Bootstrap components
+    document.addEventListener('DOMContentLoaded', function() {
+      // Tooltips
+      const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+      const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+      });
+      
+      // Popovers
+      const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+      const popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+        return new bootstrap.Popover(popoverTriggerEl);
+      });
+      
+      // Scrollspy
+      const dataSpyList = [].slice.call(document.querySelectorAll('[data-bs-spy="scroll"]'));
+      dataSpyList.forEach(function (dataSpyEl) {
+        bootstrap.ScrollSpy.getInstance(dataSpyEl) || new bootstrap.ScrollSpy(dataSpyEl);
+      });
+      
+      // Carousels
+      const carousels = [].slice.call(document.querySelectorAll('.carousel'));
+      carousels.forEach(function (carouselEl) {
+        return new bootstrap.Carousel(carouselEl);
+      });
+    });
+    
+    // Typeahead initialization
+    const jobTitles = [
+      'Frontend Developer', 'Backend Developer', 'Full Stack Developer', 
+      'UI/UX Designer', 'Product Manager', 'Data Scientist',
+      'DevOps Engineer', 'QA Engineer', 'Mobile Developer',
+      'Technical Writer', 'Scrum Master', 'System Administrator',
+      'Network Engineer', 'Security Specialist', 'Cloud Architect',
+      'Marketing Manager', 'Content Writer', 'Digital Marketer',
+      'Sales Executive', 'Customer Support', 'HR Manager',
+      'Financial Analyst', 'Accountant', 'Business Analyst'
+    ];
+    
+    const locations = [
+      'Bangalore', 'Mumbai', 'Delhi', 'Hyderabad', 'Chennai',
+      'Pune', 'Kolkata', 'Ahmedabad', 'Gurgaon', 'Noida',
+      'Remote', 'Work From Home', 'Hybrid'
+    ];
+    
+    // Initialize job title typeahead
+    const jobTitleBloodhound = new Bloodhound({
+      datumTokenizer: Bloodhound.tokenizers.whitespace,
+      queryTokenizer: Bloodhound.tokenizers.whitespace,
+      local: jobTitles
+    });
+    
+    $('.typeahead#jobSearch').typeahead({
+      hint: true,
+      highlight: true,
+      minLength: 1
+    }, {
+      name: 'job-titles',
+      source: jobTitleBloodhound,
+      templates: {
+        suggestion: function(data) {
+          return '<div><i class="bi bi-search me-2"></i>' + data + '</div>';
+        }
+      }
+    });
+    
+    // Initialize location typeahead
+    const locationBloodhound = new Bloodhound({
+      datumTokenizer: Bloodhound.tokenizers.whitespace,
+      queryTokenizer: Bloodhound.tokenizers.whitespace,
+      local: locations
+    });
+    
+    $('.typeahead#locationSearch, .typeahead#jobLocation').typeahead({
+      hint: true,
+      highlight: true,
+      minLength: 1
+    }, {
+      name: 'locations',
+      source: locationBloodhound,
+      templates: {
+        suggestion: function(data) {
+          return '<div><i class="bi bi-geo-alt me-2"></i>' + data + '</div>';
+        }
+      }
+    });
+    
+    // Alert system
+    function showAlert(message, type = 'success') {
+      const alertEl = document.getElementById('liveAlert');
+      const alertMessage = document.getElementById('alertMessage');
+      
+      // Set alert content and style
+      alertMessage.textContent = message;
+      alertEl.className = `alert alert-${type} alert-dismissible fade show`;
+      
+      // Show the alert
+      alertEl.classList.remove('d-none');
+      
+      // Auto-hide after 5 seconds
+      setTimeout(() => {
+        const bsAlert = new bootstrap.Alert(alertEl);
+        bsAlert.close();
+      }, 5000);
+    }
+    
+    // Save job functionality
+    document.querySelectorAll('.save-btn').forEach(button => {
+      button.addEventListener('click', function(e) {
+        e.preventDefault();
+        const jobId = this.getAttribute('data-job-id');
+        const isSaved = this.classList.contains('btn-secondary');
+        
+        if (isSaved) {
+          this.classList.remove('btn-secondary');
+          this.classList.add('btn-outline-secondary');
+          this.innerHTML = '<i class="bi bi-bookmark"></i> Save';
+          showAlert(`Job #${jobId} removed from saved jobs`, 'info');
+        } else {
+          this.classList.remove('btn-outline-secondary');
+          this.classList.add('btn-secondary');
+          this.innerHTML = '<i class="bi bi-bookmark-check-fill"></i> Saved';
+          showAlert(`Job #${jobId} saved to your favorites!`);
+        }
+      });
+    });
+    
+    // Apply job functionality
+    document.querySelectorAll('.apply-btn').forEach(button => {
+      button.addEventListener('click', function(e) {
+        e.preventDefault();
+        const jobId = this.getAttribute('data-job-id');
+        showAlert(`Application submitted for Job #${jobId}!`, 'info');
+      });
+    });
+    
+    // Form submissions
+    document.getElementById('loginForm')?.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+      modal.hide();
+      showAlert('Logged in successfully! Welcome back.', 'success');
+    });
+    
+    document.getElementById('registerForm')?.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const modal = bootstrap.Modal.getInstance(document.getElementById('registerModal'));
+      modal.hide();
+      showAlert('Registration successful! Welcome to CareerConnect.', 'success');
+    });
+    
+    document.getElementById('forgotPasswordForm')?.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const modal = bootstrap.Modal.getInstance(document.getElementById('forgotPasswordModal'));
+      modal.hide();
+      showAlert('Password reset link sent to your email. Please check your inbox.', 'info');
+    });
+    
+    document.getElementById('postJobForm')?.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const modal = bootstrap.Modal.getInstance(document.getElementById('postJobModal'));
+      modal.hide();
+      showAlert('Job posted successfully! It will be visible to candidates shortly.', 'success');
+    });
+    
+    document.getElementById('filterForm')?.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const modal = bootstrap.Modal.getInstance(document.getElementById('filterModal'));
+      modal.hide();
+      showAlert('Filters applied successfully!', 'info');
+    });
+  </script>
+</body>
+</html>
